@@ -75,19 +75,20 @@ function resolveCollision(p1, p2) {
  * 颜色数组
  */
 let colorArray = [
-    '#F7473B',
-    '#3B8B88',
-    '#F2C14E',
-    '#F78154',
-    '#2176AE'
+    'rgba(247, 71, 59, ',
+    'rgba(59, 139, 136, ',
+    'rgba(242, 193, 78, ',
+    'rgba(247, 129, 84, ',
+    'rgba(33, 118, 174, '
 ];
+
 
 /**
  * 鼠标位置
  */
 let mouse = {
-    x: 10,
-    y: 10
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
 }
 
 
@@ -115,8 +116,10 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let ctx = canvas.getContext('2d');
+let globalAlpha = 0.3;
 
-function Particle(x, y, dx, dy, radius, mass, color) {
+
+function Particle(x, y, dx, dy, radius, mass, color, oppacity) {
     this.x = x;
     this.y = y;
     this.dx = dx;
@@ -124,11 +127,12 @@ function Particle(x, y, dx, dy, radius, mass, color) {
     this.radius = radius;
     this.mass = mass;
     this.color = color;
+    this.oppacity = oppacity;
 
     this.draw = function () {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = this.color + this.oppacity + ')';
         ctx.fill();
         ctx.closePath();
     }
@@ -155,6 +159,12 @@ function Particle(x, y, dx, dy, radius, mass, color) {
         this.x += this.dx;
         this.y += this.dy;
 
+        if (getDistance(this.x, this.y, mouse.x, mouse.y) < 100) {
+            this.oppacity = 1;
+        } else {
+            this.oppacity = globalAlpha;
+        }
+
         this.draw();
     }
 }
@@ -163,7 +173,7 @@ let particles;
 
 function init() {
     particles = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 300; i++) {
         let radius = randomIntFromRange(10, 20);
         let x = randomIntFromRange(radius, canvas.width - radius);
         let y = randomIntFromRange(radius, canvas.height - radius);
@@ -181,7 +191,7 @@ function init() {
         let dy = randomDoubleFromRange(-2, 2);
         let mass = radius * 0.5;
         let color = randomColors(colorArray);
-        particles.push(new Particle(x, y, dx, dy, radius, mass, color));
+        particles.push(new Particle(x, y, dx, dy, radius, mass, color, globalAlpha));
     }
 }
 
