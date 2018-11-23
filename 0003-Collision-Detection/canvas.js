@@ -19,27 +19,54 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
-function resolveCollision(p1, p2) {
-    let xVelocityDiff = p1.dx - p2.dx;
-    let yVelocityDiff = p1.dy - p2.dy;
+function rotateVelocity(v, theta) {
+    return {
+        x: v.x * Math.cos(theta) - v.y * Math.sin(theta),
+        y: v.y * Math.cos(theta) + v.x * Math.sin(theta)
+    };
+}
 
+function resolveCollision(p1, p2) {
+    let xVelDiff = p2.dx - p1.dx;
+    let yVelDiff = p2.dy - p1.dy;
     let xDist = p1.x - p2.x;
     let yDist = p1.y - p2.y;
 
-    if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
-        let totalMass = p1.mass + p2.mass;
+    if (xVelDiff * xDist + yVelDiff * yDist > 0) {
 
-        // new velocity of p1
-        let newP1Dx = ((p1.mass - p2.mass) * p1.dx + 2 * p2.mass * p2.dx) / totalMass;
-        let newP1Dy = ((p1.mass - p2.mass) * p1.dy + 2 * p2.mass * p2.dy) / totalMass;
-        // new velocity of p2
-        let newP2Dx = ((p2.mass - p1.mass) * p2.dx + 2 * p1.mass * p1.dx) / totalMass;
-        let newP2Dy = ((p2.mass - p1.mass) * p2.dy + 2 * p1.mass * p1.dy) / totalMass;
+        let v1 = {
+            x: p1.dx,
+            y: p1.dy
+        };
+        let v2 = {
+            x: p2.dx,
+            y: p2.dy
+        };
 
-        p1.dx = newP1Dx;
-        p1.dy = newP1Dy;
-        p2.dx = newP2Dx;
-        p2.dy = newP2Dy;
+        let theta = -Math.atan2(p1.y - p2.y, p1.x - p2.x);
+
+        // rotate to the new coordinate system that suitable for 1D elastic collision
+        let rotatedV1 = rotateVelocity(v1, theta);
+        let rotatedV2 = rotateVelocity(v2, theta);
+
+        // calculate velocity after collision
+        let rotatedV1AfterCollision = {
+            x: (rotatedV1.x * (p1.mass - p2.mass) + 2 * p2.mass * rotatedV2.x) / (p1.mass + p2.mass),
+            y: rotatedV1.y
+        };
+        let rotatedV2AfterCollision = {
+            x: (rotatedV2.x * (p2.mass - p1.mass) + 2 * p1.mass * rotatedV1.x) / (p1.mass + p2.mass),
+            y: rotatedV2.y
+        };
+
+        // rotate back
+        let v1AfterCollision = rotateVelocity(rotatedV1AfterCollision, -theta);
+        let v2AfterCollision = rotateVelocity(rotatedV2AfterCollision, -theta);
+
+        p1.dx = v1AfterCollision.x;
+        p1.dy = v1AfterCollision.y;
+        p2.dx = v2AfterCollision.x;
+        p2.dy = v2AfterCollision.y;
     }
 }
 
@@ -137,7 +164,7 @@ let particles;
 function init() {
     particles = [];
     for (let i = 0; i < 50; i++) {
-        let radius = randomIntFromRange(18, 20);
+        let radius = randomIntFromRange(10, 20);
         let x = randomIntFromRange(radius, canvas.width - radius);
         let y = randomIntFromRange(radius, canvas.height - radius);
 
