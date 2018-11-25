@@ -5,3 +5,4 @@
 |[0001 - Colorful bouncing circles](https://codepen.io/tianxinxie/pen/xQpamX)|2018-11-21|
 |[0002 - Balls with gravity](https://codepen.io/tianxinxie/pen/xQpeWd)|2018-11-21|
 |[0003 - Elastic collision simulation](https://codepen.io/tianxinxie/pen/jQzjRZ)|2018-11-23|
+|[0004 - Circular motion with drag effect](https://codepen.io/tianxinxie/pen/vQrKrq)|2018-11-26|
