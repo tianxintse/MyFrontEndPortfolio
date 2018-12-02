@@ -43,7 +43,7 @@ function Ball(x, y, dx, dy, radius, color) {
     }
 
     this.update = function () {
-        if (this.y + this.radius + this.dy > canvas.height) {
+        if (this.y + this.radius + this.dy + Gravity > canvas.height) {
             this.dy = -this.dy
             this.dy *= Friction;
             this.dx *= Friction;
@@ -51,8 +51,8 @@ function Ball(x, y, dx, dy, radius, color) {
             this.dy += Gravity;
         }
 
-        if (this.x + this.radius >= canvas.width ||
-            this.x - this.radius <= 0) {
+        if (this.x + this.radius + this.dx >= canvas.width ||
+            this.x - this.radius + this.dx <= 0) {
             this.dx = -this.dx;
         }
 
