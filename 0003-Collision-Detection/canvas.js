@@ -29,10 +29,10 @@ function rotateVelocity(v, theta) {
 function resolveCollision(p1, p2) {
     let xVelDiff = p2.dx - p1.dx;
     let yVelDiff = p2.dy - p1.dy;
-    let xDist = p1.x - p2.x;
-    let yDist = p1.y - p2.y;
+    let xDist = p2.x - p1.x;
+    let yDist = p2.y - p1.y;
 
-    if (xVelDiff * xDist + yVelDiff * yDist > 0) {
+    if (xVelDiff * xDist + yVelDiff * yDist < 0) {
 
         let v1 = {
             x: p1.dx,
